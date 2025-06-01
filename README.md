@@ -1,11 +1,12 @@
 # Design Document: Real-Time Data Visualization Dashboard
 
 ## Jump Into The project
+
 - Assuming you're at the project root directory
+
 1. run `node datagen.js`
 2. Open a new terminal, cd into `backend`, and run `uvicorn main:app --reload`
-3. Open a new terminal,  cd into `frontend/app`, and run `npm run dev`
-   
+3. Open a new terminal, cd into `frontend/app`, and run `npm run dev`
 
 ## Architecture Choices
 
@@ -38,6 +39,7 @@
 
 - **Time Constraints:**
 
+  - The backend should store the incoming data and stream the data from the storage to the client, in the current way it works, every client served different data (since each client opens a new websocket which will generate new data)
   - Focused on core functionality: real-time streaming, charting, and basic controls.
   - Used in-memory buffers for simplicity; no persistent storage or advanced error handling.
   - Minimal backend validation and reconnection logic.
@@ -48,7 +50,7 @@
 
   - The main issue I faced was visualizing the real data as it was being transferred to the client.
     Having this much data causes a massive FPS drop in the UI.
-    Couldn't find any suitable library that would be good enough to show the required amount of data (100 samples/sec * 10 channels * 30-second timeframes). So I just picked the one I had the most hands-on experience with.
+    Couldn't find any suitable library that would be good enough to show the required amount of data (100 samples/sec _ 10 channels _ 30-second timeframes). So I just picked the one I had the most hands-on experience with.
   - All averaging is done server-side for efficiency, but could be moved to the client if needed.
 
 - **Extensibility:**
@@ -69,7 +71,6 @@
   - Add tests (unit, integration, e2e).
   - The record and download options for each chart should be performed on the server side.
 
-
 **Sources of knowledge & ChatGPT links**
 
 [how to create a websocket between a react client and a python server?](https://chatgpt.com/share/683b7a29-bafc-8010-92e3-5b52966030f6)
@@ -80,6 +81,6 @@
 
 [How to setup a python listener to a datastream ?](https://chatgpt.com/share/683b8694-651c-8010-ac76-bd108ecdf01b)
 
-*Minor syntax errors were handled by VS Code Copilot.
+\*Minor syntax errors were handled by VS Code Copilot.
 
-*There are comments in the code indicating that the code scope below it was created with Copilot (just to save time for small UI solutions).
+\*There are comments in the code indicating that the code scope below it was created with Copilot (just to save time for small UI solutions).
