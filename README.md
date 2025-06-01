@@ -5,8 +5,12 @@
 - Assuming you're at the project root directory
 
 1. run `node datagen.js`
-2. Open a new terminal, cd into `backend`, and run `uvicorn main:app --reload`
-3. Open a new terminal, cd into `frontend/app`, and run `npm run dev`
+2. Open a new terminal, cd into `backend`,
+3. run `pip install -r requirements.txt` 
+4. run `uvicorn main:app --reload`
+5. Open a new terminal, cd into `frontend/app`
+6. run `npm install`
+7. run `npm run dev`
 
 ## Architecture Choices
 
