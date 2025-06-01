@@ -1,5 +1,11 @@
 # Design Document: Real-Time Data Visualization Dashboard
 
+## Jump Into The project
+1. At the root directory run `node datagen.js`
+2. Open new terminal and run `uvicorn main:app --reload`
+3. Open new terminal and run `npm run dev`
+   
+
 ## Architecture Choices
 
 ### Data Handling & Communication
