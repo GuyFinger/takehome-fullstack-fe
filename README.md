@@ -1,9 +1,10 @@
 # Design Document: Real-Time Data Visualization Dashboard
 
 ## Jump Into The project
-1. At the root directory run `node datagen.js`
-2. Open new terminal and run `uvicorn main:app --reload`
-3. Open new terminal and run `npm run dev`
+- Assuming you're at the project root directory
+1. run `node datagen.js`
+2. Open a new terminal, cd into `backend`, and run `uvicorn main:app --reload`
+3. Open a new terminal,  cd into `frontend/app`, and run `npm run dev`
    
 
 ## Architecture Choices
@@ -15,7 +16,7 @@
   - Implemented with Python and FastAPI.
   - Receives a TCP data stream (100 samples/sec, 10 channels/sample) via a mock data generator.
   - Uses an async generator (`get_data_stream`) to buffer and average data over a configurable window (`time_avg`), emitting JSON objects per batch (more on that in the frontend section).
-  - Exposes a WebSocket endpoint (`/ws/eeg-feed`) for real-time streaming to the frontend. The `time_avg` parameter is passed as a query param to control the averaging window.
+  - Exposes a WebSocket endpoint (`/ws/eeg-feed`) for real-time streaming to the frontend. The `time_avg` parameter is passed as a query parameter to control the averaging window.
 
 - **Frontend:**
   - Built with React (Vite + TypeScript).
@@ -40,14 +41,14 @@
   - Focused on core functionality: real-time streaming, charting, and basic controls.
   - Used in-memory buffers for simplicity; no persistent storage or advanced error handling.
   - Minimal backend validation and reconnection logic.
-  - UI/UX is functional but not polished (basic styling, no mobile optimization,inline CSS).
-  - Python is not one of the strongest languages I know, but I felt that since it was needed for the job I should learn the basics and learn how to set up a Python server (using FastAPI as well). AI did come in handy here in the form of validation and syntax help (just to save time googling).
+  - UI/UX is functional but not polished (basic styling, no mobile optimization, inline CSS).
+  - Python is not one of the strongest languages I know, but I felt that since it was needed for the job, I should learn the basics and learn how to set up a Python server (using FastAPI as well). AI did come in handy here in the form of validation and syntax help (just to save time googling).
 
 - **Performance:**
 
-  - Main issue I faced was visualizing the real data as it was being transferred to the client.
+  - The main issue I faced was visualizing the real data as it was being transferred to the client.
     Having this much data causes a massive FPS drop in the UI.
-    Couldn't find any suitable library that would be good enough to show the required amount of data (100 samples/sec _ 10 channels _ 30 seconds timeframe). So I just picked the one I had the most hands-on experience with.
+    Couldn't find any suitable library that would be good enough to show the required amount of data (100 samples/sec * 10 channels * 30-second timeframes). So I just picked the one I had the most hands-on experience with.
   - All averaging is done server-side for efficiency, but could be moved to the client if needed.
 
 - **Extensibility:**
