@@ -34,6 +34,7 @@ async def get_data_stream(
                 buffer = [0.0] * channels
 
             if len(sample) != channels:
+                # Inconsistent sample size, skip this sample but we should log it
                 continue
 
             for i, v in enumerate(sample):
