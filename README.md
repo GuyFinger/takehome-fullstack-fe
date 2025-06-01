@@ -62,12 +62,17 @@
   - Add tests (unit, integration, e2e).
   - The record and download options for each chart should be performed on the server side.
 
-## Improvements with More Time
 
 **Sources of knowledge & ChatGPT links**
+
 [how to create a websocket between a react client and a python server?](https://chatgpt.com/share/683b7a29-bafc-8010-92e3-5b52966030f6)
+
 [fastAPI websockets query params](https://fastapi.tiangolo.com/tutorial/query-params/)
+
 [How to get current time in python?](https://chatgpt.com/share/683b861c-d06c-8010-9e3d-2af736cebd4a)
+
 [How to setup a python listener to a datastream ?](https://chatgpt.com/share/683b8694-651c-8010-ac76-bd108ecdf01b)
+
 *Minor syntax errors were handled by VS Code Copilot.
+
 *There are comments in the code indicating that the code scope below it was created with Copilot (just to save time for small UI solutions).
