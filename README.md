@@ -1,89 +1,73 @@
-# **Real-Time Data Visualization Dashboard**
+# Design Document: Real-Time Data Visualization Dashboard
 
-## **Overview**  
-This project is a take-home assignment where you will build a real-time web-based application that visualizes streaming data. The application will consist of:
+## Architecture Choices
 
-- **A backend server** that receives floating-point data from a TCP stream at **100 samples/sec** (each sample has 10 values, one per channel).
-- **A frontend client** that renders this data live on a line chart, displaying the last 30 seconds of data.
+### Data Handling & Communication
 
-Your task is to design and implement a working solution, making decisions around data handling, communication between the client and server, and frontend state management.
+- **Backend:**
 
-*We do not ask you to invest more than **4 hours** in this project. Focus on delivering value, and clearly label the code where you would have done things differently if you had a week to complete the task.*
+  - Implemented with Python and FastAPI.
+  - Receives a TCP data stream (100 samples/sec, 10 channels/sample) via a mock data generator.
+  - Uses an async generator (`get_data_stream`) to buffer and average data over a configurable window (`time_avg`), emitting JSON objects per batch (more on that in the frontend section).
+  - Exposes a WebSocket endpoint (`/ws/eeg-feed`) for real-time streaming to the frontend. The `time_avg` parameter is passed as a query param to control the averaging window.
 
-It's OK to use AI - see [below](#generative-ai).
+- **Frontend:**
+  - Built with React (Vite + TypeScript).
+  - Uses a custom hook (`useEEGStreamHook`) to connect to the backend WebSocket, requesting data with the desired averaging window.
+  - Maintains a rolling buffer of the last 30 seconds of data in state.
+  - Provides controls for recording, downloading, and toggling channel visibility.
 
-### **If you have extra time (Optional Enhancements)**  
-If time permits, add a **second chart** that displays a **moving average over the past 1 second (100 samples)** for each channel.
+### Rendering Strategy
 
----
+- **Charting:**
+  - Utilizes [Recharts](https://recharts.org/) for performant, responsive line charts (having previous familiarity with Recharts from my current role).
+  - Two charts are rendered:
+    - **MainChart:** Shows raw (or near real-time) data for all channels, updating as new data arrives.
+      The default data visualization had to be aggregated on the server for performance reasons. The user **can** toggle it off to view the raw data as it is being transferred with a refresh rate of one second (also for performance reasons).
+    - **AverageChart:** Shows a moving average over a user-configurable window (default 1 second).
+  - Legends allow toggling individual channel visibility.
 
-## **Requirements**  
+## Challenges & Trade-offs
 
-### Backend
-- The backend should receive the incoming data stream.
-- It should provide a way for the frontend to access this real-time data efficiently.
-- The backend can be implemented in the language you know best. At brain.space we use Python (w/FastAPI), but you can implement with any technology.
+- **Time Constraints:**
 
-### Frontend
-- The frontend should display 10 real-time lines on a single chart, with:  
-  - **X-axis:** Time  
-  - **Y-axis:** Value (one line per channel, 0-9)  
-- The chart should update continuously as new data arrives, showing only the **last 30 seconds** of data.
-- The frontend should retrieve and manage data from the backend in a performant way.
-- The dashboard should ideally be implemented with **React**.
+  - Focused on core functionality: real-time streaming, charting, and basic controls.
+  - Used in-memory buffers for simplicity; no persistent storage or advanced error handling.
+  - Minimal backend validation and reconnection logic.
+  - UI/UX is functional but not polished (basic styling, no mobile optimization,inline CSS).
+  - Python is not one of the strongest languages I know, but I felt that since it was needed for the job I should learn the basics and learn how to set up a Python server (using FastAPI as well). AI did come in handy here in the form of validation and syntax help (just to save time googling).
 
-### **Extra Credit (Optional)**  
-- Add a **second chart** that displays a **1-second moving average** for each channel.
-- Decide where and how to compute the moving average while keeping performance optimal.
-- Add any other cool features you think might be nice, either fully implementing them or adding a placeholder and comments.
+- **Performance:**
 
-### <a name="generative-ai"></a>Generative AI
+  - Main issue I faced was visualizing the real data as it was being transferred to the client.
+    Having this much data causes a massive FPS drop in the UI.
+    Couldn't find any suitable library that would be good enough to show the required amount of data (100 samples/sec _ 10 channels _ 30 seconds timeframe). So I just picked the one I had the most hands-on experience with.
+  - All averaging is done server-side for efficiency, but could be moved to the client if needed.
 
-You can use generative AI to help you with the project, but if so, **please share the relevant chats** with a public link or screenshot/download.
+- **Extensibility:**
+  - Code is modular (hooks, utils), but lacks comprehensive tests and documentation due to time.
 
----
+## Improvements with More Time
 
-## **Setup Instructions**  
+- **Backend:**
 
-### For and Clone the Repository**  
-Fork this repository and clone it to your local machine:
-```sh
-$ git clone https://github.com/YOUR_USERNAME/takehome-fullstack-fe.git
-$ cd takehome-fullstack-fe
-```
+  - Add authentication and robust error handling.
+  - Implement persistent storage for recorded sessions.
+  - Add unit tests.
 
-### Run the mock data generator
-```sh
-node datagen.js
-```
+- **Frontend:**
+  - Improve UI/UX (responsive design, better controls, loading/error states).
+  - Add more chart features (zoom, pan, export, annotations).
+  - Implement client-side reconnection and buffering for network hiccups.
+  - Add tests (unit, integration, e2e).
+  - The record and download options for each chart should be performed on the server side.
 
-You can test the datagen server by running:
-```sh
-telnet localhost 9000
-```
+## Improvements with More Time
 
----
-
-## **Deliverables**  
-1. Access to forked repository, containing a `README.md` with updated instructions.
-1. A **short design document** (can be a markdown file in the repo) covering:
-   - Architecture choices (data handling, communication, rendering strategy).
-   - Challenges faced and trade-offs made due to time constraints.
-   - What you'd improve or do differently with more time.
----
-
-## **Discussion Topics for the Interview**  
-After completing the assignment, we’ll discuss:
-- **Backend Design:** How did you handle the data stream? How does the backend communicate with the frontend?
-- **Frontend Architecture:** How does the frontend manage state and performance while rendering real-time data?
-- **Performance Optimizations:** How does the system scale with a higher sampling rate or more channels?
-- **Trade-offs & Improvements:** What challenges did you face, and how would you improve the system?
-
----
-
-## **Next Steps**  
-1. Clone the provided repo and set up your development environment.
-2. Implement the backend and frontend as described.
-3. Submit your forked repository with your code and documentation.
-
-Good luck! 🚀
+**Sources of knowledge & ChatGPT links**
+[how to create a websocket between a react client and a python server?](https://chatgpt.com/share/683b7a29-bafc-8010-92e3-5b52966030f6)
+[fastAPI websockets query params](https://fastapi.tiangolo.com/tutorial/query-params/)
+[How to get current time in python?](https://chatgpt.com/share/683b861c-d06c-8010-9e3d-2af736cebd4a)
+[How to setup a python listener to a datastream ?](https://chatgpt.com/share/683b8694-651c-8010-ac76-bd108ecdf01b)
+*Minor syntax errors were handled by VS Code Copilot.
+*There are comments in the code indicating that the code scope below it was created with Copilot (just to save time for small UI solutions).
