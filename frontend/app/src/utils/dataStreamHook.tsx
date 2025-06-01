@@ -5,7 +5,7 @@ export function useEEGStreamHook() {
 	const wsRef = useRef<WebSocket | null>(null);
 	const dataRef = useRef<EEGDataPoint[]>([]);
 	const [data, setData] = useState<EEGDataPoint[]>([]);
-	const [timeAvg, setTimeAvg] = useState<number>(0.1);
+	const [timeAvg, setTimeAvg] = useState<number>(1);
 
 	useEffect(() => {
 		const ws = new WebSocket(`ws://localhost:8000/ws/eeg-feed?time_avg=${timeAvg}`);
@@ -15,6 +15,7 @@ export function useEEGStreamHook() {
 			try {
 				const msg = JSON.parse(event.data);
 				dataRef.current.push(msg);
+				//if timeAvg is higher than 0, we will only update the data when new msg comes in
 				if (timeAvg !== 0 && dataRef.current.length > 0) {
 					setData([...dataRef.current]);
 				}
@@ -32,6 +33,7 @@ export function useEEGStreamHook() {
 		};
 
 		let intervalId: NodeJS.Timeout | null = null;
+		// If timeAvg is 0, we will update the data every second for performance reasons
 		if (timeAvg === 0) {
 			intervalId = setInterval(() => {
 				setData([...dataRef.current]);

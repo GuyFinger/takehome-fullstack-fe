@@ -1,5 +1,5 @@
 import { TextField } from '@mui/material';
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import {
 	CHANNEL_COLORS,
@@ -10,9 +10,12 @@ import {
 } from '../utils/chartUtils';
 import { useEEGStreamHook } from '../utils/dataStreamHook';
 
-export default function AverageChart({timeAvg = 0.1}) {
+export default function AverageChart() {
+	// Custom hook to manage EEG data stream and average time
 	const {data, setTimeAvg} = useEEGStreamHook();
+	// Custom hook to manage legend visibility and rendering
 	const {visibleLines, renderLegend} = useLegend(CHANNEL_COUNT);
+	// Custom hook to handle recording logic
 	const {
 		isRecording,
 		recordedData,
@@ -22,17 +25,15 @@ export default function AverageChart({timeAvg = 0.1}) {
 		handleDownloadRecorded,
 	} = useRecording(data, visibleLines);
 
-	useEffect(() => {
-		setTimeAvg(timeAvg);
-	}, [timeAvg]);
-
 	const now = data.length ? data[data.length - 1].timestamp : Date.now();
 	const WINDOW_MS = 30 * 1000;
+	// Filter data to only include points within the last 30 seconds
 	const filteredData = useMemo(
 		() => data.filter((pt) => pt.timestamp >= now - WINDOW_MS && pt.timestamp <= now),
 		[data, now]
 	);
 
+	// Generate x-axis ticks for the last 30 seconds
 	const TICK_INTERVAL_MS = 1000; // 1 second
 	const tickStart = now - 29 * 1000; // Start at 30 seconds ago (inclusive)
 	const xTicks = useMemo(

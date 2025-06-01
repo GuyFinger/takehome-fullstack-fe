@@ -11,10 +11,13 @@ import {
 import { useEEGStreamHook } from '../utils/dataStreamHook';
 
 export default function MainChart() {
+	// Custom hook to manage EEG data stream and average time
 	const {data, setTimeAvg} = useEEGStreamHook();
+	// Custom hook to manage legend visibility and rendering
 	const {visibleLines, renderLegend} = useLegend(CHANNEL_COUNT);
+	// State to manage real-time stream toggle
 	const [realTimeStream, setRealTimeStream] = useState<boolean>(false);
-
+	// Custom hook to handle recording logic
 	const {
 		isRecording,
 		recordedData,
@@ -24,12 +27,14 @@ export default function MainChart() {
 		handleDownloadRecorded,
 	} = useRecording(data, visibleLines);
 
+	// Effect to reset time average when real-time stream is toggled
 	useEffect(() => {
 		setTimeAvg(realTimeStream ? 0 : 0.1);
 	}, [realTimeStream]);
 
 	const now = Date.now();
 	const WINDOW_MS = 30 * 1000;
+	// Filter data to only include points within the last 30 seconds
 	const filteredData = useMemo(
 		() => data.filter((pt) => pt.timestamp >= now - WINDOW_MS && pt.timestamp <= now),
 		[data, now]

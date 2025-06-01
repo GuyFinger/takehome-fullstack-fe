@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import type {DownloadButtonsProps, EEGDataPoint} from '../types';
 
 export const CHANNEL_COUNT = 10;
 
@@ -7,11 +8,6 @@ export const CHANNEL_COLORS = Array.from(
 	{length: CHANNEL_COUNT},
 	(_, i) => `hsl(${(i * 36) % 360},70%,60%)`
 );
-
-interface EEGDataPoint {
-	timestamp: number;
-	[key: string]: any;
-}
 
 type DownloadFinishedCallback = (finished: boolean) => void;
 
@@ -128,15 +124,6 @@ export function useLegend(channelCount: number) {
 		</div>
 	);
 	return {visibleLines, renderLegend, handleLegendClick, setVisibleLines};
-}
-
-interface DownloadButtonsProps {
-	isRecording: boolean;
-	handleStartRecord: () => void;
-	handleStopRecord: () => void;
-	handleDownloadRecorded: () => void;
-	recordedData: any[];
-	recordDownloaded: boolean;
 }
 
 export function DownloadButtons({

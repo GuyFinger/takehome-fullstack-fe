@@ -1,12 +1,9 @@
-import { TextField } from '@mui/material';
-import { useState } from 'react';
-import AverageChart from './components/AvrageChart';
+import AverageChart from './components/AverageChart';
 import Background from './components/Background';
 import MainChart from './components/MainChart';
 import './style.scss';
 
 export default function App() {
-	const [timeAvg, setTimeAvg] = useState<number>(1);
 	return (
 		<div
 			style={{
@@ -71,7 +68,7 @@ export default function App() {
 							flexDirection: 'column',
 						}}
 					>
-						<AverageChart timeAvg={timeAvg} />
+						<AverageChart />
 					</div>
 				</div>
 			</div>
