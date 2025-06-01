@@ -39,7 +39,8 @@
 
 - **Time Constraints:**
 
-  - The backend should store the incoming data and stream the data from the storage to the client, in the current way it works, every client served different data (since each client opens a new websocket which will generate new data)
+  - The backend should store the incoming data and stream the data from the storage to the client, in the current way it works, every client served different data (since each client opens a new websocket which will generate new data).
+    In the current state the average chart also opens a new websocket leading to different data source being presented
   - Focused on core functionality: real-time streaming, charting, and basic controls.
   - Used in-memory buffers for simplicity; no persistent storage or advanced error handling.
   - Minimal backend validation and reconnection logic.
