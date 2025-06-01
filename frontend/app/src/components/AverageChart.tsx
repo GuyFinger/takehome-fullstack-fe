@@ -55,8 +55,9 @@ export default function AverageChart() {
 				}}
 			>
 				<p style={{color: 'rgba(255, 255, 255, 0.8)', textAlign: 'center'}}>
-					Enter an average result by timeframe (in seconds) default is 1 seconds:
+					Choose data‐averaging period (seconds) Defaults to 1 second
 				</p>
+
 				<TextField
 					size='small'
 					id='filled-basic'
